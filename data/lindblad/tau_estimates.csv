@@ -1,0 +1,2 @@
+tau_G_full,tau_G_trunc,acf_cut,cut_lag_s,tau_bound,psd_S0_one_sided,psd_S0_trunc,var_pi,l1_abs,kk_seed,tau_KK,passivity_ok
+-6.494002487448733e-11,2.0899896265256883,zero,20.66,0.0199727173794823,-1.2988388424679806e-10,0.0103751702848739,0.0024821104739455,106.4295980923479,tau_G_trunc,1.969083176979547,True

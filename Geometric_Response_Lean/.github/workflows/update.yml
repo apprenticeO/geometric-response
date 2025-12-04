@@ -1,0 +1,6 @@
+name: Update Dependencies (disabled)
+
+on:
+  workflow_dispatch:
+
+jobs: {}

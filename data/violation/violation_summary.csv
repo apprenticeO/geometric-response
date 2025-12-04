@@ -1,0 +1,3 @@
+case,tau_G_trunc_s,tau_KK_s,passivity_ok,var_drift_pct
+Non-passive,2.008273544359257,-1.9776366754733856,False,
+Quench,1.053630579480518,1.9118394526175408,True,41.44181985374953
