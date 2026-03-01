@@ -15,7 +15,7 @@ namespace GeometricResponse
 
 noncomputable section
 
-/-! # Geometric Response and Frequency-Dependent Gravitational Coupling
+/-! # Geometric Response Theory (GK→KK Necessity)
 
 ## Theoretical Framework
 
@@ -83,12 +83,16 @@ Quantum Structure          Geometric Response           Operational Scales
 
 ### Paper References (Conceptual, Not Line-Specific)
 
-From "Geometric Response and the Frequency-Dependent Gravitational Coupling":
-- GK definition of τ_G from normalized autocorrelation
-- KK small-ω slope derivation (necessity chain)
-- Debye closure model (sufficient condition)
-- Operational scales ω_G, λ_G, m_G
-- Passivity and causality constraints
+Primary manuscript targeted by this Lean development:
+- **"From Microscopic Structural Interdependence to Causal Dispersive Geometry"**
+  - Necessity chain Π → C_Π → τ_G (Green–Kubo) → χ(ω)=1−iωτ_G+O(ω²) (Kramers–Kronig)
+  - Causality + passivity + regression/FDT normalization as the response-side assumptions
+  - Operational scales ω_G, λ_G, m_G induced by τ_G
+  - Debye / single-pole response as an **optional slope-saturating closure**, not a unique derivation
+
+Companion (already published) phenomenology/calibration paper:
+- **"Geometric Response and the Frequency-Dependent Gravitational Coupling" (IJQF)**:
+  - Uses the same constitutive response vocabulary and emphasizes diagnostics/calibration.
 
 From "Quantum Structural Triad":
 - Structural persistence (Π_A ≠ 0 under H1-H3)
@@ -115,19 +119,22 @@ open Complex
 /- (Paper Sec. Debye) One-pole susceptibility and derived real-valued kernel. -/
 
 /-- Debye (single-pole) kernel (sufficient closure): `R(t)=τ^{-1} e^{-t/τ} 1_{t≥0}`.
-    Paper mapping: Optional Debye closure (L239–L246) and Model closure (L691–L704). -/
+    Paper mapping: Debye is used as an optional one-timescale (single-pole) closure. -/
 def debyeKernel (τ : ℝ) (t : ℝ) : ℝ :=
   if t ≥ 0 then (1 / τ) * Real.exp (-(t / τ)) else 0
 
 /-- Debye susceptibility `χ_D(ω)=1/(1+i ω τ)`.
-    Paper (Response kernel): Eq. (χ) at L795; passivity/KK discussion L808–L821. -/
+    Paper mapping: optional single-pole susceptibility consistent with the project’s
+    one-sided retarded transform convention `e^{-i ω t}`. -/
 def chiDebye (τ : ℝ) (ω : ℝ) : ℂ :=
   1 / (1 + Complex.I * (ω : ℂ) * τ)
--- Closed-form imaginary part and passivity will be added after a toolchain bump.
+-- Note: the imaginary-part sign for our `e^{-i ω t}` convention is proved in
+-- `Response/Conventions.lean` (for real kernels), and Debye-specific passivity
+-- is proved in `Response/Debye.lean`.
 
 /-- DC normalization for Debye: `χ_D(0)=1`.
-    Paper mapping: normalization context around FDT/regression (L359–L365), and
-    adiabatic fixed point (L619–L621). For Debye this holds identically. -/
+    Paper mapping: DC normalization `χ(0)=1` is part of the regression/FDT calibration
+    in the necessity chain; for Debye it holds identically. -/
 lemma chiDebye_at_zero (τ : ℝ) : chiDebye τ 0 = (1 : ℂ) := by
   unfold chiDebye
   simp
@@ -140,8 +147,8 @@ Debye one-sided transform (truncated closed form, sign convention e^{-i ω t}):
   ∫₀ᵀ (τ^{-1} e^{-t/τ}) e^{-i ω t} dt
   = (1 - exp(-(τ^{-1} + i ω) T)) / (1 + i ω τ).
 Paper mapping:
-  - Eq. (χ): L795 uses `χ_D(ω)=1/(1+i ω τ)` with the e^{-i ω t} convention.
-  - This closed form shows the T→∞ limit equals `χ_D(ω)` for τ>0 (Re(τ^{-1}+iω)>0).
+  - This closed form shows the `T→∞` limit equals `χ_D(ω)` for `τ>0`
+    (exponential tail decay).
 We record the closed form as a definition to align notation without invoking measure theory.
 -/
 namespace Debye

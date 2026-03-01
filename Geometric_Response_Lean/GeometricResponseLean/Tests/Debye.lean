@@ -4,11 +4,10 @@ import GeometricResponseLean.Response.Debye
 open GeometricResponse
 
 /- Basic checks for the Debye susceptibility and kernel bounds.
-   Paper mapping (Geometric Response and the Frequency–Dependent Gravitational Coupling.tex):
-   - Response kernel and passivity: L795–L821 (χ, H=|χ|^2, Imχ≤0)
-   - GK definition and PSD link: L301–L314
-   - Scales and λ_G, m_G: L360–L372, L591–L595
-   - OU exemplar and Debye closure: L269–L277 -/
+   Paper mapping (primary): "From Microscopic Structural Interdependence to Causal Dispersive Geometry"
+   - Debye/single-pole is treated as an optional slope-saturating closure.
+   - The necessity results constrain the low-frequency slope independently of closure.
+   (Companion IJQF phenomenology paper uses the same Debye diagnostics for plots/bands.) -/
 namespace GeometricResponse.Tests
 
 -- H(ω) ≥ 0 and ≤ 1

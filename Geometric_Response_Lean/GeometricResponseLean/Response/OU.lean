@@ -30,10 +30,10 @@ This module proves:
 
 ## Paper Mapping
 
-- **Paper Lines 273-279**: OU microscopic model example
-- **Paper Equation (277)**: C_Π(t) = e^(-|t|/τ₀)
-- **Paper Lines 302-314**: Green-Kubo definition (necessary)
-- **Paper Appendix B, Lines 1158-1183**: OU numerical verification
+- Primary manuscript: uses OU/OU-like processes as a canonical “single-timescale” exemplar for
+  \(C_\Pi \in L^1\) and for a closure in which τ_G equals the correlation time.
+- Lean mapping: this file supplies a fully formal, axiom-free instance where the Green–Kubo
+  integral exists and can be computed exactly.
 
 This provides the **first concrete model** where the Green-Kubo integral
 is proven to exist without axioms.

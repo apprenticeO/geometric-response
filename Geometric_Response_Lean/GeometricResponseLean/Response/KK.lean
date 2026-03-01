@@ -165,8 +165,7 @@ lemma t_mul_sinc_tendsto (t : ℝ) :
    ============================================================================ -/
 
 /-- Algebraic identity: for ω ≠ 0, `sin(ωt)/ω = t · sinc(ωt)`.
-    Paper mapping: This is the key integrand in the KK slope formula 
-    (L474-L476). -/
+    Paper mapping: this is the core integrand rewrite used in the GK→KK slope proof. -/
 lemma sin_div_omega_eq_t_mul_sinc {ω t : ℝ} (hω : ω ≠ 0) :
     Real.sin (ω * t) / ω = t * Real.sinc (ω * t) := by
   unfold Real.sinc
@@ -186,8 +185,7 @@ lemma sin_div_omega_eq_t_mul_sinc {ω t : ℝ} (hω : ω ≠ 0) :
     field_simp [ht]
 
 /-- Pointwise limit for the KK slope integrand: `sin(ωt)/ω → t` as `ω → 0⁻`.
-    Paper mapping: L483-L488 (small-ω limit of the susceptibility integral).
-    This is the key pointwise convergence needed for dominated convergence. -/
+    Paper mapping: pointwise small-ω limit used to connect spectral slope to a time moment. -/
 lemma sin_div_omega_tendsto_t (t : ℝ) :
     Filter.Tendsto (fun ω : ℝ => Real.sin (ω * t) / ω)
       (nhdsWithin 0 ({0}ᶜ)) (nhds t) := by
@@ -218,13 +216,13 @@ lemma sin_div_omega_tendsto_t (t : ℝ) :
 
 /-- Basic bound: `|sin(x)| ≤ |x|` for all x.
     This is the key inequality for the dominated convergence argument.
-    Paper mapping: Used implicitly in the domination argument (L493-L496). -/
+    Paper mapping: domination ingredient for the GK→KK slope proof. -/
 lemma abs_sin_le_abs (x : ℝ) : |Real.sin x| ≤ |x| :=
   Real.abs_sin_le_abs
 
 /-- Dominating bound for the KK slope integrand: For `ω ≠ 0`,
     `|sin(ωt)/ω| ≤ |t|`.
-    Paper mapping: L493-L496 (domination condition for DCT). -/
+    Paper mapping: key domination condition for DCT. -/
 lemma abs_sin_div_omega_le_abs_t {ω t : ℝ} (hω : ω ≠ 0) :
     |Real.sin (ω * t) / ω| ≤ |t| := by
   rw [abs_div]
@@ -241,7 +239,7 @@ lemma abs_sin_div_omega_le_abs_t {ω t : ℝ} (hω : ω ≠ 0) :
 /-- Extended dominating bound: For any `ε > 0`, there exists `δ > 0` such that
     for `|ω| < δ` and `ω ≠ 0`, we have `|sin(ωt)/ω| ≤ |t| + ε`.
     This is a uniform version useful for integration arguments.
-    Paper mapping: L493-L496 (uniform domination over bounded intervals). -/
+    Paper mapping: uniform domination variant over bounded intervals. -/
 lemma abs_sin_div_omega_le_abs_t_plus_eps (t ε : ℝ) (hε : 0 < ε) :
     ∃ δ > 0, ∀ ω, ω ≠ 0 → |ω| < δ → |Real.sin (ω * t) / ω| ≤ |t| + ε := by
   -- Choose δ = 1 (any positive constant works since |sin(ωt)/ω| ≤ |t|)
@@ -258,7 +256,7 @@ lemma abs_sin_div_omega_le_abs_t_plus_eps (t ε : ℝ) (hε : 0 < ε) :
 
 /-- Integrand domination for DCT: For fixed `t` and `R` with `|R(t)| ≤ M`,
     the integrand `|R(t) · sin(ωt)/ω|` is bounded by `M · |t|`.
-    Paper mapping: L493-L496 (domination for the integral). -/
+    Paper mapping: integrand bound used in DCT. -/
 lemma integrand_bound_for_DCT (R : ℝ → ℝ) (M : ℝ) (hM_nonneg : 0 ≤ M) 
     (hM : ∀ t, |R t| ≤ M) (ω t : ℝ) (hω : ω ≠ 0) :
     |R t * (Real.sin (ω * t) / ω)| ≤ M * |t| := by
@@ -273,7 +271,7 @@ lemma integrand_bound_for_DCT (R : ℝ → ℝ) (M : ℝ) (hM_nonneg : 0 ≤ M)
     the integral `∫[0,T] R(t) · sin(ωt)/ω dt → ∫[0,T] R(t) · t dt` as ω→0
     along the punctured neighborhood `𝓝[≠] 0`.
     
-    Paper mapping: L493-L503 (dominated convergence argument).
+    Paper mapping: this theorem is the rigorous GK→KK “small-ω slope” engine (finite window).
     
     Strategy in Lean:
     * Define `F ω t := R t * (t * Real.sinc (ω * t))`.

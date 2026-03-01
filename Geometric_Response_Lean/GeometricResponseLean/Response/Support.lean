@@ -27,7 +27,9 @@ necessity chain formalized in `KK.lean`.
 
 ## Physical Context
 
-From "Geometric Response and the Frequency–Dependent Gravitational Coupling":
+Primary manuscript targeted by this Lean development:
+- "From Microscopic Structural Interdependence to Causal Dispersive Geometry"
+  (GK→KK necessity chain; τ_G from autocorrelation; causality/passivity/regression constraints).
 
 The triad observable Π_A(t) = √F_Q · S_A(t) · I(A:Ā,t) measures structural persistence.
 Under hypotheses H1 (locality), H2 (genuine coupling), H3 (ergodicity), the
@@ -37,7 +39,7 @@ Green-Kubo time τ_G = ∫₀^∞ C_Π(t) dt is well-defined and positive.
 
 - Paley & Zygmund (1932): On some series of functions
 - Kubo (1957): Statistical-mechanical theory of irreversible processes
-- Paper Lines 54-92 (H1-H3), Lines 316-322 (variance bound), Lines 302-307 (L¹ condition)
+- Paper mapping: hypotheses H1–H3 and the Green–Kubo/Kramers–Kronig chain (section-level; no line numbers)
 -/
 
 noncomputable section
