@@ -37,6 +37,108 @@ This document presents the mathematical content of the \texttt{GeometricResponse
 \textbf{Connection to physics}: The theory builds on the Quantum Structural Triad $\Pi_A = \sqrt{F_Q} \cdot S_A \cdot I(A{:}\bar A)$, which is formally proven in a separate Rocq/Coq development. The Lean formalization assumes the triad framework and focuses on the geometric response layer.
 
 % ------------------------------------------------------------
+\section{Complete Lean Module Index}
+% ------------------------------------------------------------
+
+This section lists \emph{every} Lean file in the repository subproject
+\texttt{Geometric\_Response\_Lean/GeometricResponseLean/} and summarizes its main definitions and theorems.
+The goal is navigability (``where is X proved?'') rather than repeating proofs.
+
+\subsection{Top-level modules}
+\begin{itemize}
+\item \texttt{Basic.lean}: empty namespace placeholder for the project.
+
+\item \texttt{GeometricResponse.lean}: central ``umbrella'' module tying together the response framework. It defines the Debye kernel/susceptibility and many convenience lemmas used throughout.
+Typical headline objects include:
+\begin{itemize}
+\item Debye definitions: \texttt{debyeKernel}, \texttt{chiDebye}, and derived kernels/couplings (e.g.\ \texttt{Hpow}, \texttt{Geff}).
+\item Debye closed-form parts: \texttt{chiDebye\_im\_eq\_pow}, \texttt{chiDebye\_re\_eq\_pow}, and passivity \texttt{chiDebye\_passivity\_nonpos}.
+\item Model-independent slope packaging: \texttt{ModelIndependent.LowOmegaSlope} and its transfer lemma to \texttt{G\_eff}.
+\item Green--Kubo ``skeleton'' scales: \texttt{GK.Setting}, \texttt{GK.omegaG}, \texttt{GK.mG}.
+\end{itemize}
+\end{itemize}
+
+\subsection{Response layer (\texttt{Response/})}
+\begin{itemize}
+\item \texttt{Response/Support.lean}: measure-theoretic support lemmas used in the necessity chain.
+Headline theorems:
+\begin{itemize}
+\item \texttt{paley\_zygmund\_simple}
+\item \texttt{integral\_pos\_of\_nonneg\_of\_pos\_measure}
+\item \texttt{tau\_G\_positive}
+\end{itemize}
+
+\item \texttt{Response/KK.lean}: the core GK$\to$KK finite-window dominated-convergence engine.
+Headline theorem:
+\begin{itemize}
+\item \texttt{dct\_finite\_window\_integral} (with supporting pointwise-limit and domination lemmas such as \texttt{sin\_div\_omega\_tendsto\_t} and \texttt{abs\_sin\_div\_omega\_le\_abs\_t})
+\end{itemize}
+
+\item \texttt{Response/Debye.lean}: sufficiency of the one-pole (Debye) closure.
+Headline results include the exponential tail decay and convergence of truncated transforms (e.g.\ \texttt{tailExp\_tendsto\_zero}) and Debye passivity facts used by downstream lemmas.
+
+\item \texttt{Response/OU.lean}: a concrete exemplar where the Green--Kubo integral exists and can be computed (OU autocorrelation).
+Headline theorems:
+\begin{itemize}
+\item \texttt{ou\_tau\_G\_eq\_tau}
+\item \texttt{ou\_tau\_G\_finite}
+\item integrability lemmas for the OU autocorrelation on $\mathbb{R}_+$ (used to eliminate abstract ``$L^1$'' axioms in this case)
+\end{itemize}
+
+\item \texttt{Response/ExponentialMixing.lean}: explicit exponential-mixing condition implying fast decorrelation, instantiated for OU.
+Headline items:
+\begin{itemize}
+\item definition \texttt{ExponentialMixing}
+\item theorem \texttt{ou\_has\_exponential\_mixing}
+\end{itemize}
+
+\item \texttt{Response/VarianceBound.lean}: variance-bound placeholders for concrete processes.
+Currently contains shape statements (provably consistent stubs) such as \texttt{ou\_variance\_bound} and \texttt{exp\_acf\_variance\_bound}.
+\end{itemize}
+
+\subsection{Spectral layer (\texttt{Spectral/})}
+\begin{itemize}
+\item \texttt{Spectral/WK.lean}: Wiener--Khinchin wrappers linking the Green--Kubo truncation limit to the DC PSD truncation.
+Headline lemma:
+\begin{itemize}
+\item \texttt{psd0\_trunc\_tendsto\_of\_gk\_trunc}
+\end{itemize}
+\end{itemize}
+
+\subsection{Conservation layer (\texttt{Conservation/})}
+\begin{itemize}
+\item \texttt{Conservation/Flat.lean}: flat-space commuting-operator conservation for polynomial-in-$\Box$ operators.
+Headline objects:
+\begin{itemize}
+\item \texttt{box\_pow} and its commutation lemma \texttt{div\_box\_pow\_comm}
+\item conservation theorems such as \texttt{conservation\_power} (and the finite-polynomial conservation theorem used by later modules)
+\end{itemize}
+
+\item \texttt{Conservation/Convolution.lean}: translation-invariant kernel operators and exact conservation under commutation with divergence.
+Headline objects:
+\begin{itemize}
+\item structure \texttt{TranslationInvariantKernel} and predicate \texttt{CommutesWithDiv}
+\item \texttt{convolution\_preserves\_conservation\_pointwise}
+\item \texttt{weighted\_sum\_preserves\_conservation}
+\end{itemize}
+
+\item \texttt{Conservation/DebyeKernel.lean}: conservation for truncated Debye operator series (polynomial approximation).
+Headline objects:
+\begin{itemize}
+\item definition \texttt{debye\_truncated}
+\item \texttt{debye\_truncated\_preserves\_conservation}
+\item \texttt{debye\_first\_order\_preserves\_conservation}
+\end{itemize}
+\end{itemize}
+
+\subsection{Tests (\texttt{Tests/})}
+\begin{itemize}
+\item \texttt{Tests/Debye.lean}: lightweight examples checking basic Debye kernel properties and bounds (\texttt{Hpow} nonnegativity, DC limits, symmetry).
+
+\item \texttt{Tests/KK.lean}: lightweight example using the low-$\omega$ slope wrappers for $G_{\mathrm{eff}}$.
+\end{itemize}
+
+% ------------------------------------------------------------
 \section{Mathematical Framework}
 % ------------------------------------------------------------
 
@@ -329,9 +431,9 @@ The Debye kernel $R(t) = \tau^{-1} e^{-t/\tau}$ (for $t \geq 0$) satisfies:
 \end{proof}
 
 \begin{corollary}[Closure]
-Together, necessity and sufficiency establish that:
+Debye provides a simple one-timescale closure consistent with the GK and KK constraints:
 \[
-\text{Debye model} \Longleftrightarrow \text{Minimal closure for GK + KK constraints}
+\text{Debye model} \Longrightarrow \text{consistent closure for GK + KK constraints}
 \]
 \end{corollary}
 
