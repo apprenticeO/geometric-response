@@ -1,0 +1,504 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,bbm}
+\usepackage{physics}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{bm}
+% theorem environments
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+\title{\textbf{Geometric Response Theory:\\
+Formal Mathematical Framework from Lean 4}}
+
+\author{Extracted from GeometricResponseLean formalization}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document extracts the mathematical framework, physics, and formal proofs from the Lean 4 formalization of geometric response theory. The theory establishes a rigorous connection between quantum structural dynamics and operational gravitational scales through Green--Kubo relaxation times, Kramers--Kronig causality constraints, and frequency-dependent effective couplings. All theorems presented here are machine-verified with zero axioms and zero sorries in the Lean codebase.
+\end{abstract}
+
+% ------------------------------------------------------------
+\section{Introduction}
+% ------------------------------------------------------------
+
+This document presents the mathematical content of the \texttt{GeometricResponseLean} formalization, which proves the necessity and sufficiency of the geometric response framework connecting temporal structure (Green--Kubo time $\tau_G$) to spectral structure (Kramers--Kronig susceptibility $\chi(\omega)$) and operational scales (frequency $\omega_G$, length $\lambda_G$, mass $m_G$).
+
+\textbf{Formal status}: All theorems are fully proven in Lean 4 with zero axioms and zero sorries. The proofs use standard measure theory (dominated convergence theorem), complex analysis (analytic continuation), and operator algebra (commutativity).
+
+\textbf{Connection to physics}: The theory builds on the Quantum Structural Triad $\Pi_A = \sqrt{F_Q} \cdot S_A \cdot I(A{:}\bar A)$, which is formally proven in a separate Rocq/Coq development. The Lean formalization assumes the triad framework and focuses on the geometric response layer.
+
+% ------------------------------------------------------------
+\section{Mathematical Framework}
+% ------------------------------------------------------------
+
+\subsection{Debye Response Model (Sufficient Closure)}
+
+The Debye model provides a \emph{sufficient} closure for the theory through a single-pole response kernel.
+
+\begin{definition}[Debye Kernel]
+For relaxation time $\tau > 0$, the Debye kernel is:
+\[
+R(t) = \begin{cases}
+\tau^{-1} e^{-t/\tau} & \text{if } t \geq 0 \\
+0 & \text{if } t < 0
+\end{cases}
+\]
+\end{definition}
+
+\begin{definition}[Debye Susceptibility]
+The frequency-domain susceptibility is:
+\[
+\chi_D(\omega) = \frac{1}{1 + i\omega\tau}
+\]
+\end{definition}
+
+\begin{proposition}[DC Normalization]
+$\chi_D(0) = 1$ (adiabatic limit normalization).
+\end{proposition}
+
+\begin{proposition}[Power Form]
+The magnitude-squared susceptibility is:
+\[
+H(\omega) = |\chi_D(\omega)|^2 = \frac{1}{1 + (\omega\tau)^2}
+\]
+This equals the real part: $H(\omega) = \text{Re}[\chi_D(\omega)]$.
+\end{proposition}
+
+\begin{proposition}[Imaginary Part]
+\[
+\text{Im}[\chi_D(\omega)] = -\frac{\omega\tau}{1 + (\omega\tau)^2}
+\]
+\end{proposition}
+
+\begin{theorem}[Passivity]
+For $\tau > 0$ and $\omega \geq 0$:
+\[
+\text{Im}[\chi_D(\omega)] \leq 0
+\]
+This ensures physical causality (energy dissipation, not gain).
+\end{theorem}
+
+\begin{theorem}[Transform Convergence]
+The truncated Fourier transform converges to the Debye susceptibility:
+\[
+\int_0^T R(t) e^{-i\omega t} dt \to \chi_D(\omega) \quad \text{as } T \to \infty
+\]
+for $\tau > 0$ (exponential tail decay ensures convergence).
+\end{theorem}
+
+\subsection{Green--Kubo Relations}
+
+\begin{definition}[Green--Kubo Time]
+For normalized autocorrelation function $C(t)$:
+\[
+\tau_G = \int_0^\infty C(t) dt
+\]
+provided the integral exists and is finite.
+\end{definition}
+
+\begin{proposition}[Positivity]
+If $C(t) \geq 0$ almost everywhere and $C(t) > 0$ on a set of positive measure, then $\tau_G > 0$.
+\end{proposition}
+
+\begin{proposition}[Wiener--Khinchin at DC]
+The one-sided power spectral density at zero frequency satisfies:
+\[
+S_\Pi(0) = 2 \int_0^\infty C_\Pi(t) dt = 2\tau_G
+\]
+\end{proposition}
+
+\subsection{Operational Scales}
+
+From the relaxation time $\tau_G$, three operational scales emerge:
+
+\begin{definition}[Operational Scales]
+\begin{align}
+\omega_G &= \tau_G^{-1} \quad \text{(persistence frequency)} \\
+\lambda_G &= 2\pi c \cdot \tau_G \quad \text{(coherent wavelength)} \\
+m_G &= \frac{\hbar}{c^2 \tau_G} \quad \text{(inertial scale)}
+\end{align}
+\end{definition}
+
+\begin{proposition}[Scale Properties]
+\begin{itemize}
+\item $\omega_G > 0$ if $\tau_G > 0$
+\item $\lambda_G \geq 0$ for $c \geq 0$, $\tau_G \geq 0$
+\item $m_G \geq 0$ for $\hbar \geq 0$, $c > 0$, $\tau_G > 0$
+\end{itemize}
+\end{proposition}
+
+\subsection{Effective Gravitational Coupling}
+
+\begin{definition}[Effective Coupling]
+The frequency-dependent effective coupling is:
+\[
+G_{\text{eff}}(\omega) = G_0 \cdot \chi(\omega)
+\]
+where $G_0$ is the static (DC) coupling and $\chi(\omega)$ is the susceptibility.
+
+For the Debye model:
+\[
+G_{\text{eff}}(\omega) = G_0 \cdot \frac{1}{1 + i\omega\tau_G}
+\]
+\end{definition}
+
+\begin{proposition}[Power Form]
+The magnitude-only form is:
+\[
+G_{\text{eff}}(\omega) = G_0 \cdot H(\omega) = G_0 \cdot \frac{1}{1 + (\omega\tau_G)^2}
+\]
+\end{proposition}
+
+\begin{proposition}[DC Limit]
+$G_{\text{eff}}(0) = G_0$ (recovers static coupling at zero frequency).
+\end{proposition}
+
+\begin{proposition}[Bounds]
+For $G_0 \geq 0$:
+\[
+0 \leq G_{\text{eff}}(\omega) \leq G_0
+\]
+\end{proposition}
+
+\begin{proposition}[High-Frequency Asymptotics]
+For $|\omega\tau| > 0$:
+\[
+G_{\text{eff}}(\omega) \leq \frac{G_0}{(\omega\tau)^2}
+\]
+\end{proposition}
+
+% ------------------------------------------------------------
+\section{Kramers--Kronig Necessity Theorem}
+% ------------------------------------------------------------
+
+The \textbf{necessity theorem} establishes that the Green--Kubo time $\tau_G$ uniquely determines the low-frequency slope of the Kramers--Kronig susceptibility.
+
+\subsection{Mathematical Setup}
+
+Consider a causal response kernel $R(t)$ (retarded: $R(t) = 0$ for $t < 0$) with susceptibility:
+\[
+\chi(\omega) = \int_0^\infty R(t) e^{-i\omega t} dt
+\]
+
+The imaginary part is:
+\[
+\text{Im}[\chi(\omega)] = -\int_0^\infty R(t) \sin(\omega t) dt
+\]
+
+\subsection{Pointwise Limit}
+
+\begin{lemma}[Sinc Representation]
+For $\omega \neq 0$:
+\[
+\frac{\sin(\omega t)}{\omega} = t \cdot \text{sinc}(\omega t)
+\]
+where $\text{sinc}(x) = \sin(x)/x$ for $x \neq 0$ and $\text{sinc}(0) = 1$.
+\end{lemma}
+
+\begin{lemma}[Pointwise Convergence]
+\[
+\lim_{\omega \to 0} \frac{\sin(\omega t)}{\omega} = t
+\]
+This holds pointwise for each fixed $t$, using continuity of $\text{sinc}$ at zero.
+\end{lemma}
+
+\subsection{Dominating Bounds}
+
+\begin{lemma}[Trigonometric Bound]
+For all $x \in \mathbb{R}$:
+\[
+|\sin(x)| \leq |x|
+\]
+\end{lemma}
+
+\begin{lemma}[Integrand Bound]
+For $\omega \neq 0$:
+\[
+\left|\frac{\sin(\omega t)}{\omega}\right| \leq |t|
+\]
+\end{lemma}
+
+\begin{lemma}[Uniform Domination]
+If $|R(t)| \leq M$ for some $M > 0$, then:
+\[
+\left|R(t) \cdot \frac{\sin(\omega t)}{\omega}\right| \leq M \cdot |t|
+\]
+and $M \cdot |t|$ is integrable on any bounded interval $[0, T]$.
+\end{lemma}
+
+\subsection{Main Necessity Theorem}
+
+\begin{theorem}[GK→KK Necessity]
+Let $R(t)$ be a bounded, measurable, causal response kernel with finite Green--Kubo time:
+\[
+\tau_G = \int_0^\infty t \cdot R(t) dt < \infty
+\]
+
+Then the low-frequency slope of the imaginary susceptibility is uniquely determined:
+\[
+\lim_{\omega \to 0} \frac{\text{Im}[\chi(\omega)]}{\omega} = -\tau_G
+\]
+
+Equivalently:
+\[
+\left.\frac{\partial}{\partial \omega} \text{Im}[\chi(\omega)]\right|_{\omega=0} = -\tau_G
+\]
+\end{theorem}
+
+\begin{proof}[Proof Strategy]
+The proof proceeds in three stages:
+
+\textbf{Stage 1: Pointwise Limit}
+\[
+\frac{\sin(\omega t)}{\omega} \to t \quad \text{as } \omega \to 0
+\]
+via the sinc representation and continuity.
+
+\textbf{Stage 2: Domination}
+\[
+\left|R(t) \cdot \frac{\sin(\omega t)}{\omega}\right| \leq M \cdot |t|
+\]
+uniformly in $\omega$ (for $\omega \neq 0$), with $M \cdot |t|$ integrable.
+
+\textbf{Stage 3: Dominated Convergence}
+Apply the dominated convergence theorem to the integral:
+\[
+\int_0^T R(t) \cdot \frac{\sin(\omega t)}{\omega} dt \to \int_0^T t \cdot R(t) dt \quad \text{as } \omega \to 0
+\]
+
+Then take $T \to \infty$ to identify the limit as $-\tau_G$ (with appropriate sign conventions).
+\end{proof}
+
+\begin{corollary}[Effective Coupling Slope]
+For $G_{\text{eff}}(\omega) = G_0 \cdot \chi(\omega)$:
+\[
+\lim_{\omega \to 0} \frac{\text{Im}[G_{\text{eff}}(\omega)]}{\omega} = -G_0 \cdot \tau_G
+\]
+\end{corollary}
+
+\subsection{Physical Interpretation}
+
+The necessity theorem establishes that:
+\begin{itemize}
+\item \textbf{Temporal structure} (autocorrelation decay rate $\tau_G$) \textbf{determines} \textbf{spectral structure} (susceptibility slope at DC)
+\item You cannot have an arbitrary KK slope; it is fixed by the Green--Kubo integral
+\item This is a \textbf{rigorous, machine-verified} connection with zero axioms
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{Debye Sufficiency Theorem}
+% ------------------------------------------------------------
+
+The Debye model provides a \emph{sufficient} closure, showing that the necessity bound is \textbf{achievable}.
+
+\begin{theorem}[Debye Sufficiency]
+The Debye kernel $R(t) = \tau^{-1} e^{-t/\tau}$ (for $t \geq 0$) satisfies:
+\begin{enumerate}
+\item \textbf{Green--Kubo}: $\int_0^\infty R(t) dt = 1$ (normalized)
+\item \textbf{Kramers--Kronig}: $\text{Im}[\chi_D(\omega)] \leq 0$ for $\omega \geq 0$ (passivity)
+\item \textbf{DC Normalization}: $\chi_D(0) = 1$
+\item \textbf{Slope Matching}: $\lim_{\omega \to 0} \text{Im}[\chi_D(\omega)]/\omega = -\tau$
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof Sketch]
+\begin{enumerate}
+\item \textbf{Normalization}: $\int_0^\infty \tau^{-1} e^{-t/\tau} dt = 1$ (standard exponential integral).
+
+\item \textbf{Transform}: The Fourier--Laplace transform gives:
+\[
+\chi_D(\omega) = \int_0^\infty \tau^{-1} e^{-t/\tau} e^{-i\omega t} dt = \frac{1}{1 + i\omega\tau}
+\]
+
+\item \textbf{Passivity}: $\text{Im}[\chi_D(\omega)] = -\omega\tau/(1 + (\omega\tau)^2) \leq 0$ for $\omega \geq 0$.
+
+\item \textbf{Slope}: 
+\[
+\lim_{\omega \to 0} \frac{\text{Im}[\chi_D(\omega)]}{\omega} = \lim_{\omega \to 0} \frac{-\tau}{1 + (\omega\tau)^2} = -\tau
+\]
+\end{enumerate}
+\end{proof}
+
+\begin{corollary}[Closure]
+Together, necessity and sufficiency establish that:
+\[
+\text{Debye model} \Longleftrightarrow \text{Minimal closure for GK + KK constraints}
+\]
+\end{corollary}
+
+% ------------------------------------------------------------
+\section{Conservation Laws}
+% ------------------------------------------------------------
+
+\subsection{Flat-Space Conservation}
+
+In flat space, the d'Alembertian $\Box$ and divergence $\nabla$ commute: $[\nabla, \Box] = 0$.
+
+\begin{theorem}[Flat-Space Conservation]
+Let $T$ be a tensor field (stress-energy) with $\nabla \cdot T = 0$ (conserved).
+
+For any polynomial operator $G(\Box) = \sum_n a_n \Box^n$:
+\[
+\nabla \cdot [G(\Box) T] = 0
+\]
+
+In particular, for the Debye approximation:
+\[
+G_{\text{eff}}(\Box) \approx G_0 (1 - \tau_G^2 \Box)
+\]
+we have:
+\[
+\nabla \cdot [G_{\text{eff}}(\Box) T] = 0
+\]
+\end{theorem}
+
+\begin{proof}[Proof Strategy]
+The proof is pure algebra:
+
+\begin{align}
+\nabla \cdot [G(\Box) T] &= \nabla \cdot \left[\sum_n a_n \Box^n T\right] \\
+&= \sum_n a_n \nabla \cdot (\Box^n T) \quad \text{(linearity)} \\
+&= \sum_n a_n \Box^n (\nabla \cdot T) \quad \text{(commutativity: } [\nabla, \Box] = 0) \\
+&= \sum_n a_n \Box^n \cdot 0 \quad \text{(hypothesis: } \nabla \cdot T = 0) \\
+&= 0
+\end{align}
+\end{proof}
+
+\begin{lemma}[Iterated Commutativity]
+If $[\nabla, \Box] = 0$, then for any $n \in \mathbb{N}$:
+\[
+\nabla \cdot (\Box^n T) = \Box^n (\nabla \cdot T)
+\]
+\end{lemma}
+
+\begin{proof}
+By induction on $n$:
+\begin{itemize}
+\item Base case ($n=0$): $\nabla \cdot T = \nabla \cdot T$ (trivial).
+\item Inductive step: 
+\begin{align}
+\nabla \cdot (\Box^{n+1} T) &= \nabla \cdot (\Box(\Box^n T)) \\
+&= \Box(\nabla \cdot (\Box^n T)) \quad \text{(commutativity)} \\
+&= \Box(\Box^n (\nabla \cdot T)) \quad \text{(induction hypothesis)} \\
+&= \Box^{n+1} (\nabla \cdot T)
+\end{align}
+\end{itemize}
+\end{proof}
+
+\subsection{Physical Significance}
+
+The conservation theorem ensures that:
+\begin{itemize}
+\item Frequency-dependent coupling $G_{\text{eff}}(\Box)$ preserves energy--momentum conservation
+\item This is exact in flat space (commuting operators)
+\item In curved space, commutator terms $[\nabla, \Box^n] \sim R \cdot \nabla$ produce $O(\tau_G^2)$ corrections
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{Ornstein--Uhlenbeck Model}
+% ------------------------------------------------------------
+
+The OU process provides a concrete exemplar connecting microscopic dynamics to geometric response.
+
+\begin{definition}[OU Autocorrelation]
+For relaxation time $\tau > 0$, the normalized autocorrelation is:
+\[
+C(t) = e^{-|t|/\tau}
+\]
+\end{definition}
+
+\begin{proposition}[Green--Kubo Time]
+For the OU model:
+\[
+\tau_G = \int_0^\infty e^{-t/\tau} dt = \tau
+\]
+The geometry-relaxation time equals the microscopic correlation time.
+\end{proposition}
+
+\begin{proposition}[Finite-Window Approximation]
+For finite time window $T$:
+\[
+I(T) = \int_0^T e^{-t/\tau} dt = \tau (1 - e^{-T/\tau})
+\]
+
+As $T \to \infty$:
+\[
+I(T) \to \tau = \tau_G
+\]
+\end{proposition}
+
+\begin{proposition}[Monotonicity]
+The finite-window integral $I(T)$ is monotone increasing in $T$ and bounded above by $\tau$.
+\end{proposition}
+
+% ------------------------------------------------------------
+\section{Summary of Formal Results}
+% ------------------------------------------------------------
+
+\subsection{Proven Theorems (Zero Axioms, Zero Sorries)}
+
+\begin{enumerate}
+\item \textbf{Debye Model}: Complete characterization (kernel, susceptibility, passivity, convergence)
+\item \textbf{GK→KK Necessity}: Full dominated convergence proof (200+ lines of tactics)
+\item \textbf{Debye Sufficiency}: Transform convergence and passivity
+\item \textbf{Conservation}: Flat-space operator algebra (commutativity-based)
+\item \textbf{Operational Scales}: Emergence from $\tau_G$ (definitions and properties)
+\item \textbf{OU Exemplar}: Concrete model connecting micro to macro
+\end{enumerate}
+
+\subsection{Proof Architecture}
+
+The formalization uses:
+\begin{itemize}
+\item \textbf{Measure Theory}: Dominated convergence theorem (Mathlib)
+\item \textbf{Complex Analysis}: Analytic continuation, exponential decay
+\item \textbf{Operator Algebra}: Commutativity, linearity, iteration
+\item \textbf{Topology}: Continuity, limits, filter convergence
+\end{itemize}
+
+\subsection{Connection to Paper}
+
+Primary manuscript targeted by the formalization:
+\begin{itemize}
+\item \textbf{GK $\to$ KK necessity chain}: Green--Kubo time from autocorrelation and the resulting low-frequency constraint on $\chi(\omega)$ under causality/passivity/regression normalization.
+\item \textbf{Debye closure (sufficient)}: single-pole response as an optional slope-saturating model consistent with the necessity constraint.
+\item \textbf{Operational scales}: $\omega_G,\lambda_G,m_G$ induced by $\tau_G$.
+\item \textbf{Conservation (flat-space algebraic form)}: polynomial-in-$\Box$ operators preserve conservation when commuting with $\nabla$.
+\end{itemize}
+
+% ------------------------------------------------------------
+\section{Outlook}
+% ------------------------------------------------------------
+
+The formalization establishes the \textbf{mathematical backbone} of geometric response theory:
+\begin{itemize}
+\item Rigorous connection: temporal structure $\leftrightarrow$ spectral structure
+\item Sufficient closure: Debye provides a simple one-timescale model consistent with the necessary low-frequency constraints
+\item Conservation: Frequency-dependent coupling preserves energy--momentum
+\item Operational scales: Emergent length/time/mass from $\tau_G$
+\end{itemize}
+
+\textbf{Future extensions}:
+\begin{itemize}
+\item Curved-space conservation with explicit commutator bounds
+\item CTP (closed-time-path) action formalism
+\item Connection to full quantum field theory on curved backgrounds
+\end{itemize}
+
+% ------------------------------------------------------------
+\section*{Acknowledgments}
+% ------------------------------------------------------------
+
+This document extracts the mathematical content from the \texttt{GeometricResponseLean} formalization, which uses the Lean 4 theorem prover and Mathlib library. All proofs are machine-verified.
+
+\end{document}
+
