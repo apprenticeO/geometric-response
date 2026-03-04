@@ -1,4 +1,4 @@
-This repository formalizes results from:
+This repository formalizes results from the preprint:
 
 > **From Microscopic Structural Interdependence to Causal Dispersive Geometry**  
 > Ovidiu Tataru, Zenodo, 2026  
