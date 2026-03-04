@@ -1,11 +1,22 @@
-# Geometric Response – Companion Code and Proofs
-
-This repository contains the formal proofs, numerical scripts, and minimal data
-supporting the paper:
+This repository formalizes results from:
 
 > **From Microscopic Structural Interdependence to Causal Dispersive Geometry**  
-> Ovidiu Tataru, 2025  
-> Source LaTeX: `12_TRIAD_Geometry/Latex/From Microscopic Structural Interdependence to Causal Dispersive Geometry.tex`
+> Ovidiu Tataru, Zenodo, 2026  
+> https://doi.org/10.5281/zenodo.18832967
+
+This paper builds on the framework introduced in two companion papers 
+published in the *International Journal of Quantum Foundations*, vol. 11 (2025):
+
+> **A Quantum Structural Triad: Fluctuations, Entropy, and Correlations 
+> as Interdependent Primitives**  
+> Ovidiu Tataru, IJQF 11, 800–852 (2025)  
+> https://ijqf.org/wp-content/uploads/2025/11/IJQF2025v11n4p20r.pdf  
+> *Includes companion Rocq/Coq formalization — 
+> github.com/apprenticeO/Structural-Triad*
+
+> **Geometric Response and the Frequency-Dependent Gravitational Coupling**  
+> Ovidiu Tataru, IJQF 11 (2025)  
+> https://ijqf.org/wp-content/uploads/2025/11/IJQF2025v11n4p21.pdf
 
 The paper develops a Green–Kubo → Kramers–Kronig chain from the microscopic
 structural observable \(\Pi(t)=\sqrt{F_Q}\,S\,I\) to a causal, frequency–dependent
